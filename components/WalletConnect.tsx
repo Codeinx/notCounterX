@@ -1,8 +1,9 @@
 'use client'
 
-import { useAuth, useConnect } from '@stacks/connect-react'
+import { useState, useEffect } from 'react'
 import { showConnect } from '@stacks/connect'
 import { StacksMainnet, StacksTestnet } from '@stacks/network'
+import { useStacks } from '@/providers/StacksProvider'
 
 interface WalletConnectProps {}
 
@@ -13,35 +14,40 @@ interface WalletConnectProps {}
  * Provides a beautiful UI for connecting/disconnecting the wallet.
  */
 export default function WalletConnect({}: WalletConnectProps) {
-  const { isSignedIn, userData, signOut } = useAuth()
-  const { doOpenAuth } = useConnect()
+  const { userSession, isSignedIn, userData, network } = useStacks()
+  const [address, setAddress] = useState<string>('')
 
-  const network = process.env.NEXT_PUBLIC_STACKS_NETWORK === 'mainnet' 
-    ? new StacksMainnet() 
-    : new StacksTestnet()
+  useEffect(() => {
+    if (userData) {
+      const addr = userData.profile?.stxAddress?.testnet || 
+                   userData.profile?.stxAddress?.mainnet || 
+                   ''
+      setAddress(addr)
+    }
+  }, [userData])
 
   const handleConnect = () => {
+    if (!userSession) return
+
     showConnect({
       appDetails: {
         name: process.env.NEXT_PUBLIC_APP_NAME || 'CounterX',
-        icon: window.location.origin + '/icon.png',
+        icon: typeof window !== 'undefined' ? window.location.origin + '/icon.png' : '',
       },
       redirectTo: '/',
       onFinish: () => {
         window.location.reload()
       },
-      userSession: undefined,
+      userSession: userSession,
     })
   }
 
-  const handleDisconnect = async () => {
-    await signOut()
-    window.location.reload()
+  const handleDisconnect = () => {
+    if (userSession) {
+      userSession.signUserOut()
+      window.location.reload()
+    }
   }
-
-  const address = userData?.profile?.stxAddress?.testnet || 
-                  userData?.profile?.stxAddress?.mainnet || 
-                  ''
 
   return (
     <div className="flex justify-center">
@@ -76,4 +82,3 @@ export default function WalletConnect({}: WalletConnectProps) {
     </div>
   )
 }
-
