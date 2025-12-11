@@ -1,132 +1,222 @@
-# CounterX - Simple Counter Application
+# CounterX - Clarity Smart Contract for Stacks
 
-A beautiful, modern counter application built with React and Vite. Features increment/decrement functionality with a clean, intuitive interface and persistent state management.
+A simple yet unique counter smart contract built with Clarity for the Stacks blockchain. Features increment/decrement functionality with balance tracking and comprehensive error handling.
 
-## ✨ Features
+## 📋 Overview
 
-- **Increment/Decrement**: Simple buttons to increase or decrease the counter
-- **Balance Display**: Large, prominent display of the current balance
-- **Visual Feedback**: Color-coded balance indicators (positive/negative/neutral)
-- **Persistent Storage**: Counter value is saved to localStorage and persists across page refreshes
-- **Reset Functionality**: One-click reset to zero
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Modern UI**: Beautiful gradient backgrounds and smooth animations
-- **Accessibility**: Proper ARIA labels and keyboard navigation support
+This Clarity smart contract implements a counter with the following features:
+- **Increment**: Increase the counter by 1
+- **Decrement**: Decrease the counter by 1 (with underflow protection)
+- **Reset**: Reset the counter to 0
+- **Balance Query**: Read-only function to get the current balance
+- **Custom Increment/Decrement**: Optional functions to increment/decrement by custom amounts
+
+## 🔒 Security Features
+
+- **Underflow Protection**: Prevents the counter from going below 0
+- **Clear Error Codes**: Defined error constants for better error handling
+- **Public Functions**: All functions are public and can be called by anyone
+- **Immutable Logic**: Clarity's design ensures safe, predictable execution
+
+## 📁 Contract Structure
+
+```
+counter.clar
+├── Constants
+│   ├── contract-owner: Contract owner principal
+│   ├── ERR-UNAUTHORIZED: Error code for unauthorized access
+│   └── ERR-UNDERFLOW: Error code for underflow protection
+├── Data Variables
+│   └── balance: Stores the current counter value (uint)
+└── Functions
+    ├── get-balance: Read-only function to get current balance
+    ├── increment: Increment counter by 1
+    ├── decrement: Decrement counter by 1 (with protection)
+    ├── reset: Reset counter to 0
+    ├── increment-by: Increment by custom amount
+    └── decrement-by: Decrement by custom amount (with protection)
+```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- npm or yarn
+- [Clarinet](https://docs.hiro.so/clarinet) - Clarity development tool
+- [Stacks CLI](https://docs.hiro.so/stacks-cli) - For deployment (optional)
 
 ### Installation
 
-1. Clone the repository or navigate to the project directory:
+1. Install Clarinet (if not already installed):
 ```bash
-cd notCounterX
+# macOS
+brew install clarinet
+
+# Linux/Windows - see https://docs.hiro.so/clarinet
 ```
 
-2. Install dependencies:
+2. Initialize a Clarinet project (if starting fresh):
 ```bash
-npm install
+clarinet new counter-project
+cd counter-project
 ```
 
-3. Start the development server:
+3. Add the contract to your project:
 ```bash
-npm run dev
+# Copy counter.clar to contracts/ directory
+cp counter.clar contracts/
 ```
 
-4. Open your browser and navigate to `http://localhost:3000`
+### Testing the Contract
 
-### Building for Production
-
-To create a production build:
-
+1. Start a local Clarinet console:
 ```bash
-npm run build
+clarinet console
 ```
 
-The built files will be in the `dist/` directory.
+2. Test the functions:
+```clarity
+;; Get initial balance (should be 0)
+(contract-call? .counter get-balance)
 
-To preview the production build:
+;; Increment the counter
+(contract-call? .counter increment)
 
-```bash
-npm run preview
+;; Get balance again (should be 1)
+(contract-call? .counter get-balance)
+
+;; Decrement the counter
+(contract-call? .counter decrement)
+
+;; Try to decrement below 0 (should fail)
+(contract-call? .counter decrement)
+
+;; Reset the counter
+(contract-call? .counter reset)
+
+;; Increment by custom amount
+(contract-call? .counter increment-by u10)
+
+;; Decrement by custom amount
+(contract-call? .counter decrement-by u5)
 ```
 
-## 🔒 Environment Variables Protection
+### Running Tests
 
-The `.env` file is protected and will not be committed to version control. The `.gitignore` file includes:
+Create test files in the `tests/` directory:
 
+```bash
+clarinet test
+```
+
+## 📝 Contract Functions
+
+### `get-balance`
+- **Type**: Read-only
+- **Parameters**: None
+- **Returns**: `uint` - Current balance
+- **Description**: Returns the current counter balance
+
+### `increment`
+- **Type**: Public
+- **Parameters**: None
+- **Returns**: `(ok uint)` - New balance after increment
+- **Description**: Increments the counter by 1
+
+### `decrement`
+- **Type**: Public
+- **Parameters**: None
+- **Returns**: `(ok uint)` - New balance after decrement, or `(err u1002)` if underflow
+- **Description**: Decrements the counter by 1, fails if balance is 0
+
+### `reset`
+- **Type**: Public
+- **Parameters**: None
+- **Returns**: `(ok uint)` - Always returns 0
+- **Description**: Resets the counter to 0
+
+### `increment-by`
+- **Type**: Public
+- **Parameters**: `amount uint` - Amount to increment by
+- **Returns**: `(ok uint)` - New balance after increment
+- **Description**: Increments the counter by a specified amount
+
+### `decrement-by`
+- **Type**: Public
+- **Parameters**: `amount uint` - Amount to decrement by
+- **Returns**: `(ok uint)` - New balance after decrement, or `(err u1002)` if underflow
+- **Description**: Decrements the counter by a specified amount, fails if insufficient balance
+
+## 🔐 Environment Variables Protection
+
+The `.env` file is protected and will not be committed to version control. The `.gitignore` includes:
 - `.env`
 - `.env.local`
-- `.env.development.local`
-- `.env.test.local`
-- `.env.production.local`
+- All other `.env` variants
 
-If you need to use environment variables, copy `.env.example` to `.env` and fill in your values:
+## 🎯 Code Clarity
+
+The contract is designed with maximum clarity:
+- **Comprehensive Comments**: Every function and section is documented
+- **Clear Function Names**: Self-documenting function names
+- **Error Handling**: Defined error constants for better debugging
+- **Logical Structure**: Organized with constants, data variables, and functions
+
+## 📚 Clarity Language Notes
+
+- Clarity is a **decidable** language - you can always determine what a program will do
+- All functions are **public** - anyone can call them
+- **No loops or recursion** - ensures termination
+- **Explicit error handling** - uses `asserts!` for safety checks
+
+## 🚢 Deployment
+
+### Deploy to Testnet
+
+1. Configure your deployment settings in `.env`:
+```bash
+STACKS_NETWORK=testnet
+STACKS_PRIVATE_KEY=your_private_key_here
+```
+
+2. Deploy using Clarinet:
+```bash
+clarinet deploy --testnet
+```
+
+### Deploy to Mainnet
+
+⚠️ **Warning**: Only deploy to mainnet after thorough testing!
 
 ```bash
-cp .env.example .env
+clarinet deploy --mainnet
 ```
 
-## 📁 Project Structure
+## 🧪 Example Usage
 
+```clarity
+;; Initialize counter (starts at 0)
+(contract-call? .counter get-balance)  ;; Returns: u0
+
+;; Increment multiple times
+(contract-call? .counter increment)    ;; Returns: (ok u1)
+(contract-call? .counter increment)    ;; Returns: (ok u2)
+(contract-call? .counter increment)    ;; Returns: (ok u3)
+
+;; Check balance
+(contract-call? .counter get-balance)  ;; Returns: u3
+
+;; Decrement
+(contract-call? .counter decrement)    ;; Returns: (ok u2)
+
+;; Increment by custom amount
+(contract-call? .counter increment-by u5)  ;; Returns: (ok u7)
+
+;; Decrement by custom amount
+(contract-call? .counter decrement-by u3)  ;; Returns: (ok u4)
+
+;; Reset
+(contract-call? .counter reset)        ;; Returns: (ok u0)
 ```
-notCounterX/
-├── src/
-│   ├── components/
-│   │   ├── Counter.jsx      # Main counter component
-│   │   └── Counter.css      # Counter component styles
-│   ├── App.jsx              # Root app component
-│   ├── App.css              # App component styles
-│   ├── main.jsx             # Application entry point
-│   └── index.css            # Global styles
-├── index.html               # HTML template
-├── package.json             # Dependencies and scripts
-├── vite.config.js           # Vite configuration
-├── .gitignore              # Git ignore rules (protects .env)
-├── .env.example            # Environment variables template
-└── README.md               # This file
-```
-
-## 🎨 Code Clarity
-
-The codebase is designed with clarity in mind:
-
-- **Comprehensive Comments**: All components include JSDoc-style comments explaining their purpose
-- **Clear Function Names**: Functions use descriptive, self-documenting names
-- **Organized Structure**: Components are separated into logical files
-- **Consistent Styling**: CSS follows a consistent naming convention
-- **Type Safety**: Ready for TypeScript migration if needed
-
-## 🛠️ Technologies Used
-
-- **React 18**: Modern React with hooks
-- **Vite**: Fast build tool and dev server
-- **CSS3**: Modern CSS with gradients, animations, and flexbox
-- **localStorage**: Client-side persistence
-
-## 📝 Usage
-
-1. **Increment**: Click the green "Increment" button to increase the counter
-2. **Decrement**: Click the red "Decrement" button to decrease the counter
-3. **Reset**: Click the purple "Reset" button to set the counter back to zero
-4. **View Balance**: The current balance is displayed prominently at the top
-
-The counter value is automatically saved to your browser's localStorage, so it will persist even after closing the browser.
-
-## 🎯 Future Enhancements
-
-Potential features that could be added:
-
-- Custom increment/decrement values
-- Counter history/undo functionality
-- Multiple counters
-- Export/import counter data
-- Dark/light theme toggle
-- Sound effects for button clicks
 
 ## 📄 License
 
@@ -136,7 +226,12 @@ This project is open source and available for use in the Stacks program.
 
 Feel free to submit issues, fork the repository, and create pull requests for any improvements.
 
+## 📖 Resources
+
+- [Clarity Language Documentation](https://docs.stacks.co/docs/clarity)
+- [Clarinet Documentation](https://docs.hiro.so/clarinet)
+- [Stacks Documentation](https://docs.stacks.co)
+
 ---
 
-**Built with ❤️ for the Stacks Program**
-
+**Built with ❤️ for the Stacks Blockchain Program**
