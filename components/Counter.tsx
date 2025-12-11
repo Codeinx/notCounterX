@@ -1,10 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { callReadOnlyFunction, callReadOnlyFunctionOptions, contractPrincipalCV, uintCV, standardPrincipalCV, callReadOnlyFunctionResponse } from '@stacks/transactions'
+import { callReadOnlyFunction, callReadOnlyFunctionOptions } from '@stacks/transactions'
 import { StacksMainnet, StacksTestnet } from '@stacks/network'
 import { useConnect } from '@stacks/connect-react'
-import { contractCall } from '@stacks/connect'
 
 interface CounterProps {
   network: StacksMainnet | StacksTestnet
