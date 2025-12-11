@@ -1,6 +1,6 @@
-# CounterX - Clarity Smart Contract for Stacks
+# CounterX - Stacks Counter Application
 
-A simple yet unique counter smart contract built with Clarity for the Stacks blockchain. Features increment/decrement functionality with balance tracking and comprehensive error handling.
+A beautiful, full-stack counter application built for the Stacks blockchain. Features a Clarity smart contract with increment/decrement functionality and a modern Next.js frontend with wallet integration.
 
 ## 📋 Overview
 
@@ -17,6 +17,26 @@ This Clarity smart contract implements a counter with the following features:
 - **Clear Error Codes**: Defined error constants for better error handling
 - **Public Functions**: All functions are public and can be called by anyone
 - **Immutable Logic**: Clarity's design ensures safe, predictable execution
+
+## 📁 Project Structure
+
+```
+notCounterX/
+├── counter.clar              # Clarity smart contract
+├── app/                      # Next.js app directory
+│   ├── layout.tsx           # Root layout with providers
+│   ├── page.tsx             # Main page component
+│   └── globals.css          # Global styles
+├── components/              # React components
+│   ├── Counter.tsx          # Main counter component
+│   └── WalletConnect.tsx    # Wallet connection component
+├── providers/               # Context providers
+│   └── StacksProvider.tsx   # Stacks Connect provider
+├── package.json             # Dependencies
+├── next.config.js           # Next.js configuration
+├── tailwind.config.js       # Tailwind CSS configuration
+└── README.md                # This file
+```
 
 ## 📁 Contract Structure
 
@@ -41,10 +61,58 @@ counter.clar
 
 ### Prerequisites
 
-- [Clarinet](https://docs.hiro.so/clarinet) - Clarity development tool
-- [Stacks CLI](https://docs.hiro.so/stacks-cli) - For deployment (optional)
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- [Clarinet](https://docs.hiro.so/clarinet) - Clarity development tool (for smart contract)
+- [Hiro Wallet](https://www.hiro.so/wallet) - Stacks wallet browser extension
+
+## 🎨 Frontend Setup (Next.js)
 
 ### Installation
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Create environment file:
+```bash
+cp .env.local.example .env.local
+```
+
+3. Configure your environment variables in `.env.local`:
+```bash
+NEXT_PUBLIC_STACKS_NETWORK=testnet
+NEXT_PUBLIC_CONTRACT_ADDRESS=ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.counter
+NEXT_PUBLIC_APP_NAME=CounterX
+```
+
+4. Start the development server:
+```bash
+npm run dev
+```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+### Frontend Features
+
+- **Beautiful UI**: Modern, gradient-based design with smooth animations
+- **Wallet Integration**: Connect with Hiro Wallet or other Stacks wallets
+- **Real-time Balance**: Automatically fetches and displays current counter balance
+- **Transaction Handling**: Smooth transaction flow with pending states
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Error Handling**: Clear error messages and user feedback
+
+### Building for Production
+
+```bash
+npm run build
+npm start
+```
+
+## 📜 Smart Contract Setup
+
+### Smart Contract Installation
 
 1. Install Clarinet (if not already installed):
 ```bash
