@@ -4,11 +4,12 @@
 .env.development.local
 .env.test.local
 .env.production.local
+*.env
 
-# Dependencies
+# Clarity/Stacks specific
+.clarinet/
+.devnet/
 node_modules/
-.pnp
-.pnp.js
 
 # Build outputs
 dist/
@@ -35,4 +36,8 @@ lerna-debug.log*
 
 # Testing
 coverage/
+.clarinet-tests/
 
+# Stacks deployment
+.chainstate/
+deployments/
