@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { callReadOnlyFunction, callReadOnlyFunctionOptions } from '@stacks/transactions'
-import { StacksMainnet, StacksTestnet } from '@stacks/network'
-import { useConnect } from '@stacks/connect-react'
+import { contractCall } from '@stacks/connect'
+import { useStacks } from '@/providers/StacksProvider'
 
 interface CounterProps {
-  network: StacksMainnet | StacksTestnet
   userAddress: string
 }
 
@@ -21,11 +20,11 @@ interface CounterProps {
  * - Reset counter
  * - Real-time balance updates
  */
-export default function Counter({ network, userAddress }: CounterProps) {
+export default function Counter({ userAddress }: CounterProps) {
   const [balance, setBalance] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(true)
   const [pending, setPending] = useState<boolean>(false)
-  const { doContractCall } = useConnect()
+  const { userSession, network } = useStacks()
 
   // Get contract address from environment or use default
   const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || ''
@@ -67,15 +66,18 @@ export default function Counter({ network, userAddress }: CounterProps) {
    * Handle contract function calls (increment, decrement, reset)
    */
   const handleContractCall = async (functionName: string) => {
+    if (!userSession) return
+
     try {
       setPending(true)
       
-      await doContractCall({
+      await contractCall({
         contractAddress: contractOwner,
         contractName: contractName,
         functionName: functionName,
         functionArgs: [],
         network: network,
+        userSession: userSession,
         onFinish: (data) => {
           console.log('Transaction completed:', data)
           // Refresh balance after transaction
@@ -207,4 +209,3 @@ export default function Counter({ network, userAddress }: CounterProps) {
     </div>
   )
 }
-

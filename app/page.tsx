@@ -1,24 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Counter from '@/components/Counter'
 import WalletConnect from '@/components/WalletConnect'
-import { useAuth } from '@stacks/connect-react'
-import { StacksMainnet, StacksTestnet } from '@stacks/network'
+import { useStacks } from '@/providers/StacksProvider'
 
 export default function Home() {
-  const { isSignedIn, userData } = useAuth()
-  const [network, setNetwork] = useState<StacksMainnet | StacksTestnet>(
-    new StacksTestnet()
-  )
+  const { isSignedIn, userData } = useStacks()
 
-  useEffect(() => {
-    // Set network based on environment variable
-    const networkType = process.env.NEXT_PUBLIC_STACKS_NETWORK || 'testnet'
-    setNetwork(
-      networkType === 'mainnet' ? new StacksMainnet() : new StacksTestnet()
-    )
-  }, [])
+  const userAddress = userData?.profile?.stxAddress?.testnet || 
+                      userData?.profile?.stxAddress?.mainnet || 
+                      ''
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8">
@@ -41,7 +32,7 @@ export default function Home() {
         {/* Counter Component - Only show when wallet is connected */}
         {isSignedIn && userData ? (
           <div className="animate-fade-in">
-            <Counter network={network} userAddress={userData.profile?.stxAddress?.testnet || userData.profile?.stxAddress?.mainnet || ''} />
+            <Counter userAddress={userAddress} />
           </div>
         ) : (
           <div className="text-center py-16 px-4">
@@ -65,4 +56,3 @@ export default function Home() {
     </main>
   )
 }
-
