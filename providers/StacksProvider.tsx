@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { UserSession, AppConfig } from '@stacks/connect'
+import { UserSession, AppConfig } from '@stacks/auth'
 import { StacksMainnet, StacksTestnet } from '@stacks/network'
 
 interface StacksContextType {
