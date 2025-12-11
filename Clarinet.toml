@@ -1,0 +1,11 @@
+[project]
+name = "notCounterX"
+authors = []
+description = "Counter smart contract for Stacks blockchain"
+
+[contracts.counter]
+path = "contracts/counter.clar"
+clarity_version = 2
+
+[repl]
+costs_version = 2
