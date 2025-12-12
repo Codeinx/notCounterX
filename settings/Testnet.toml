@@ -6,3 +6,4 @@ deployment_fee_rate = 10
 [accounts.deployer]
 mnemonic = "REPLACE_WITH_MNEMONIC_FROM_ENV"
 derivation = "m/44'/5757'/0'/0/0"
+
